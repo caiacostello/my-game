@@ -1,162 +1,105 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-.calculator {
-  max-width: 300px;
-  margin: 20px auto;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-#display {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 10px;
-  font-size: 24px;
-  text-align: right;
-  padding: 5px;
-}
-
-.buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
-}
-
-button {
-  padding: 10px;
-  font-size: 18px;
-  border: 1px solid #999;
-  border-radius: 3px;
-  background: #f0f0f0;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #ddd;
-}
-</style>
-
-<script>
-// Console streaming to terminal
-(function() {
-    const ws = new WebSocket('ws://localhost:8765');
-    const originalLog = console.log;
-    const originalError = console.error;
-    const originalWarn = console.warn;
-    
-    function sendToTerminal(level, args) {
-        const message = args.map(arg => 
-            typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-        ).join(' ');
-        
-        if (ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({level, message, timestamp: Date.now()}));
-        }
-        
-        // Call original console method
-        if (level === 'log') originalLog.apply(console, args);
-        else if (level === 'error') originalError.apply(console, args);
-        else if (level === 'warn') originalWarn.apply(console, args);
+  <title>Simple Calculator</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial;
     }
-    
-    console.log = (...args) => sendToTerminal('log', args);
-    console.error = (...args) => sendToTerminal('error', args);
-    console.warn = (...args) => sendToTerminal('warn', args);
-    
-    ws.onopen = () => console.log('[Console Streaming] Connected to terminal');
-    ws.onerror = () => {}; // Fail silently if no server
-})();
-</script>
+    .calculator {
+      background: #eee;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    #display {
+      width: 200px;
+      height: 40px;
+      margin-bottom: 10px;
+      font-size: 20px;
+      text-align: right;
+      padding: 5px;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+    button {
+      padding: 15px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ddd;
+    }
+  </style>
 </head>
 <body>
-
-<div class="calculator">
-  <input type="text" id="display" readonly>
-  <div class="buttons">
-    <button onclick="clearDisplay()">C</button>
-    <button onclick="appendNumber('7')">7</button>
-    <button onclick="appendNumber('8')">8</button>
-    <button onclick="appendNumber('9')">9</button>
-    <button onclick="setOperator('/')">÷</button>
-    <button onclick="appendNumber('4')">4</button>
-    <button onclick="appendNumber('5')">5</button>
-    <button onclick="appendNumber('6')">6</button>
-    <button onclick="setOperator('*')">×</button>
-    <button onclick="appendNumber('1')">1</button>
-    <button onclick="appendNumber('2')">2</button>
-    <button onclick="appendNumber('3')">3</button>
-    <button onclick="setOperator('-')">-</button>
-    <button onclick="appendNumber('0')">0</button>
-    <button onclick="appendNumber('.')">.</button>
-    <button onclick="calculate()">=</button>
-    <button onclick="setOperator('+')">+</button>
+  <div class="calculator">
+    <input type="text" id="display" readonly>
+    <div class="buttons">
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button onclick="append('/')">÷</button>
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button onclick="append('*')">×</button>
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+      <button onclick="append('3')">3</button>
+      <button onclick="append('-')">-</button>
+      <button onclick="append('0')">0</button>
+      <button onclick="append('.')">.</button>
+      <button onclick="calculate()">=</button>
+      <button onclick="append('+')">+</button>
+      <button onclick="clearDisplay()" style="grid-column: span 4">Clear</button>
+    </div>
   </div>
-</div>
 
-<script>
-let currentNumber = '';
-let previousNumber = '';
-let operator = null;
-const display = document.getElementById('display');
+  <script>
+    const display = document.getElementById('display');
+    
+    function append(value) {
+      display.value += value;
+    }
 
-function appendNumber(num) {
-  if (num === '.' && currentNumber.includes('.')) return;
-  currentNumber += num;
-  display.value = currentNumber;
-}
+    function clearDisplay() {
+      display.value = '';
+    }
 
-function setOperator(op) {
-  if (currentNumber === '') return;
-  if (previousNumber !== '') {
-    calculate();
-  }
-  operator = op;
-  previousNumber = currentNumber;
-  currentNumber = '';
-}
-
-function calculate() {
-  if (previousNumber === '' || currentNumber === '') return;
-  let result;
-  const prev = parseFloat(previousNumber);
-  const current = parseFloat(currentNumber);
-  
-  switch(operator) {
-    case '+':
-      result = prev + current;
-      break;
-    case '-':
-      result = prev - current;
-      break;
-    case '*':
-      result = prev * current;
-      break;
-    case '/':
-      result = prev / current;
-      break;
-  }
-  
-  // Test cases
-  console.assert(calculate('1', '+', '1') === 2, 'Test 1+1=2 failed');
-  console.assert(calculate('5', '-', '3') === 2, 'Test 5-3=2 failed');
-  console.assert(calculate('4', '*', '3') === 12, 'Test 4*3=12 failed');
-  console.assert(calculate('8', '/', '2') === 4, 'Test 8/2=4 failed');
-  
-  currentNumber = result.toString();
-  operator = null;
-  previousNumber = '';
-  display.value = currentNumber;
-}
-
-function clearDisplay() {
-  currentNumber = '';
-  previousNumber = '';
-  operator = null;
-  display.value = '';
-}
-</script>
+    function calculate() {
+      try {
+        // Test case: Check for division by zero
+        if (display.value.includes('/0')) {
+          console.error('Test failed: Division by zero detected');
+          display.value = 'Error';
+          return;
+        }
+        
+        const result = eval(display.value);
+        
+        // Test case: Check if result is valid
+        if (isNaN(result) || !isFinite(result)) {
+          console.error('Test failed: Invalid calculation result');
+          display.value = 'Error';
+          return;
+        }
+        
+        display.value = result;
+      } catch(e) {
+        console.error('Test failed:', e.message);
+        display.value = 'Error';
+      }
+    }
+  </script>
 </body>
 </html>

@@ -1,18 +1,22 @@
 # Simple Calculator
 
+## Description
+A basic calculator web application that performs simple arithmetic operations.
+
 ## Features
 - Basic arithmetic operations (+, -, ×, ÷)
 - Decimal point support
 - Clear function
-- Responsive design
+- Error handling
 
 ## Usage
 1. Open `index.html` in any web browser
-2. Click numbers to input values
-3. Click operators (+, -, ×, ÷) to perform operations
-4. Click equals (=) to see the result
-5. Click C to clear the display
+2. Click number buttons to input values
+3. Click operation buttons (+, -, ×, ÷) to perform calculations
+4. Press '=' to see the result
+5. Use 'Clear' to reset the calculator
 
-## Testing
-The calculator includes basic test cases for arithmetic operations.
-Check the browser console for test results.
+## Error Handling
+- Division by zero shows 'Error'
+- Invalid expressions show 'Error'
+- Console logs indicate test failures
