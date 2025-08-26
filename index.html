@@ -6,218 +6,222 @@
     <title>Simple Calculator</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Arial', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f0f2f5;
+            background-color: #f4f4f4;
             margin: 0;
         }
+
         .calculator {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             width: 300px;
+            background-color: #333;
+            padding: 15px;
         }
-        #display {
-            width: calc(100% - 20px);
-            padding: 10px;
-            font-size: 2em;
+
+        .display {
+            width: calc(100% - 20px); /* Adjust for padding */
+            height: 60px;
+            background-color: #222;
+            color: #fff;
+            font-size: 2.5em;
             text-align: right;
-            border: 1px solid #ddd;
+            padding: 10px;
+            border: none;
             border-radius: 5px;
             margin-bottom: 15px;
-            background-color: #e9ecef;
-            box-sizing: border-box;
+            box-sizing: border-box; /* Include padding in width */
         }
+
         .buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
         }
-        .button {
+
+        button {
             width: 100%;
-            padding: 20px;
+            height: 60px;
             font-size: 1.5em;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            background-color: #e0e0e0;
-            transition: background-color 0.2s ease;
+            background-color: #555;
+            color: #fff;
+            transition: background-color 0.2s;
         }
-        .button:hover {
-            background-color: #d0d0d0;
+
+        button:hover {
+            background-color: #777;
         }
-        .button.operator {
-            background-color: #ff9500;
-            color: white;
+
+        .operator {
+            background-color: #f90;
         }
-        .button.operator:hover {
-            background-color: #e08500;
+
+        .operator:hover {
+            background-color: #ffaa00;
         }
-        .button.equals {
-            background-color: #007bff;
-            color: white;
+
+        .equals {
+            background-color: #0c0;
             grid-column: span 2;
         }
-        .button.equals:hover {
-            background-color: #0069d9;
+
+        .equals:hover {
+            background-color: #0e0;
         }
-        .button.clear {
-            background-color: #dc3545;
-            color: white;
+
+        .clear {
+            background-color: #d00;
         }
-        .button.clear:hover {
-            background-color: #c82333;
+
+        .clear:hover {
+            background-color: #f00;
+        }
+
+        .zero {
+            grid-column: span 2;
         }
     </style>
 </head>
 <body>
     <div class="calculator">
-        <input type="text" id="display" readonly value="0">
+        <input type="text" class="display" readonly value="0">
         <div class="buttons">
-            <button class="button clear">C</button>
-            <button class="button operator">/</button>
-            <button class="button operator">*</button>
-            <button class="button">7</button>
-            <button class="button">8</button>
-            <button class="button">9</button>
-            <button class="button operator">-</button>
-            <button class="button">4</button>
-            <button class="button">5</button>
-            <button class="button">6</button>
-            <button class="button operator">+</button>
-            <button class="button">1</button>
-            <button class="button">2</button>
-            <button class="button">3</button>
-            <button class="button equals">=</button>
-            <button class="button">0</button>
-            <button class="button">.</button>
+            <button class="clear">C</button>
+            <button class="operator">/</button>
+            <button class="operator">*</button>
+            <button class="number">7</button>
+            <button class="number">8</button>
+            <button class="number">9</button>
+            <button class="operator">-</button>
+            <button class="number">4</button>
+            <button class="number">5</button>
+            <button class="number">6</button>
+            <button class="operator">+</button>
+            <button class="number">1</button>
+            <button class="number">2</button>
+            <button class="number">3</button>
+            <button class="equals">=</button>
+            <button class="number zero">0</button>
+            <button class="number decimal">.</button>
         </div>
     </div>
 
     <script>
-        const display = document.getElementById('display');
-        const buttons = document.querySelector('.buttons');
-        let currentInput = '0';
-        let operator = null;
+        const display = document.querySelector('.display');
+        let currentInput = '';
         let previousInput = '';
-        let resetDisplay = false;
+        let operator = null;
+        let shouldResetDisplay = false;
 
-        function updateDisplay() {
-            display.value = currentInput;
-        }
+        const clear = () => {
+            currentInput = '';
+            previousInput = '';
+            operator = null;
+            display.value = '0';
+            shouldResetDisplay = false;
+        };
 
-        buttons.addEventListener('click', (event) => {
-            const target = event.target;
-            if (!target.classList.contains('button')) return;
-
-            const value = target.textContent;
-
-            if (target.classList.contains('clear')) {
-                currentInput = '0';
-                operator = null;
-                previousInput = '';
-                resetDisplay = false;
-            } else if (target.classList.contains('operator')) {
-                if (operator && !resetDisplay) {
-                    try {
-                        currentInput = String(eval(previousInput + operator + currentInput));
-                    } catch (e) {
-                        currentInput = 'Error';
-                    }
-                }
-                previousInput = currentInput;
-                operator = value;
-                resetDisplay = true;
-            } else if (target.classList.contains('equals')) {
-                if (operator && previousInput !== '') {
-                    try {
-                        let expression = previousInput + operator + currentInput;
-                        if (operator === '/' && parseFloat(currentInput) === 0) {
-                            currentInput = 'Error: Div by 0';
-                        } else {
-                            currentInput = String(eval(expression));
-                        }
-                    } catch (e) {
-                        currentInput = 'Error';
-                    }
-                }
-                operator = null;
-                previousInput = '';
-                resetDisplay = true;
-            } else { // Number or decimal
-                if (currentInput === '0' || resetDisplay || currentInput === 'Error' || currentInput.startsWith('Error:')) {
-                    currentInput = value;
-                    resetDisplay = false;
-                } else {
-                    if (value === '.' && currentInput.includes('.')) {
-                        // Do nothing if decimal already exists
-                    } else {
-                        currentInput += value;
-                    }
-                }
+        const appendNumber = (number) => {
+            if (shouldResetDisplay) {
+                currentInput = '';
+                shouldResetDisplay = false;
             }
-            updateDisplay();
-        });
+            if (number === '.' && currentInput.includes('.')) return;
+            if (currentInput === '0' && number !== '.') currentInput = number;
+            else currentInput += number;
+            display.value = currentInput;
+        };
 
-        updateDisplay(); // Initialize display
+        const chooseOperator = (op) => {
+            if (previousInput === '' && currentInput === '') return; // No numbers entered at all
+            if (currentInput === '') { // If current input is empty (e.g. after 5 +), just change operator
+                operator = op;
+                return;
+            }
+            if (previousInput !== '') calculate(); // If there's a previous number and operator, calculate first
+            operator = op;
+            previousInput = currentInput;
+            shouldResetDisplay = true;
+        };
 
-        // --- Test Cases ---
-        console.log("--- Running Calculator Tests ---");
+        const calculate = () => {
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
 
-        function runTest(name, steps, expected, errorCheck = false) {
-            // Reset calculator state for each test
-            currentInput = '0';
+            if (isNaN(prev) || isNaN(current)) return;
+
+            switch (operator) {
+                case '+': result = prev + current; break;
+                case '-': result = prev - current; break;
+                case '*': result = prev * current; break;
+                case '/':
+                    if (current === 0) {
+                        display.value = 'Error';
+                        currentInput = ''; previousInput = ''; operator = null; shouldResetDisplay = true;
+                        return;
+                    }
+                    result = prev / current; break;
+                default: return;
+            }
+            currentInput = result.toString();
             operator = null;
             previousInput = '';
-            resetDisplay = false;
-            updateDisplay();
+            shouldResetDisplay = true;
+            display.value = currentInput;
+        };
 
-            for (const step of steps) {
-                const button = document.createElement('button'); // Dummy button for event simulation
-                button.textContent = step;
-                button.classList.add('button');
-                if (['+', '-', '*', '/'].includes(step)) button.classList.add('operator');
-                if (step === '=') button.classList.add('equals');
-                if (step === 'C') button.classList.add('clear');
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => {
+                if (button.classList.contains('number')) appendNumber(button.textContent);
+                else if (button.classList.contains('operator')) chooseOperator(button.textContent);
+                else if (button.classList.contains('equals')) calculate();
+                else if (button.classList.contains('clear')) clear();
+            });
+        });
 
-                // Simulate click by directly calling event listener logic
-                buttons.dispatchEvent(new MouseEvent('click', { bubbles: true, target: button }));
-            }
+        clear(); // Initialize display
 
+        // --- Test Cases ---
+        const runTest = (name, steps, expected) => {
+            clear();
+            steps.forEach(step => {
+                if (typeof step === 'number' || step === '.') appendNumber(step.toString());
+                else if (['+', '-', '*', '/'].includes(step)) chooseOperator(step);
+                else if (step === '=') calculate();
+                else if (step === 'C') clear();
+            });
             const actual = display.value;
-            if (errorCheck) {
-                if (actual.includes('Error')) {
-                    console.log(`✅ Test "${name}" passed (Error detected as expected).`);
-                } else {
-                    console.error(`❌ Test "${name}" failed. Expected an error, but got "${actual}".`);
-                }
-            } else if (actual === String(expected)) {
-                console.log(`✅ Test "${name}" passed. Expected: ${expected}, Got: ${actual}`);
-            } else {
-                console.error(`❌ Test "${name}" failed. Expected: ${expected}, Got: ${actual}`);
-            }
-        }
+            if (actual !== expected) console.error(`❌ Test Failed: ${name}. Expected: "${expected}", Got: "${actual}"`);
+        };
 
-        runTest("Addition", ['1', '+', '1', '='], 2);
-        runTest("Subtraction", ['1', '0', '-', '5', '='], 5);
-        runTest("Multiplication", ['2', '*', '3', '='], 6);
-        runTest("Division", ['1', '0', '/', '2', '='], 5);
-        runTest("Clear button", ['1', '+', '1', 'C'], 0);
-        runTest("Decimal addition", ['1', '.', '5', '+', '0', '.', '5', '='], 2);
-        runTest("Chained operations (2+3)*2", ['2', '+', '3', '*', '2', '='], 10); // Evaluates (2+3) then *2
-        runTest("Division by zero", ['5', '/', '0', '='], 'Error: Div by 0', true);
-        runTest("Multiple decimals (only one allowed)", ['1', '.', '2', '.', '3', '+', '1', '='], 2.2);
-        runTest("Negative result", ['5', '-', '1', '0', '='], -5);
-        runTest("Decimal multiplication", ['0', '.', '1', '*', '0', '.', '2', '='], 0.02);
-        runTest("Clear after error", ['5', '/', '0', '=', 'C'], 0);
-        runTest("New calculation after error", ['5', '/', '0', '=', '1', '+', '1', '='], 2);
-        runTest("Starting with operator (implicitly 0 + 5)", ['+', '5', '='], 5);
-
-        console.log("--- Calculator Tests Complete ---");
+        console.log("--- Running Calculator Tests ---");
+        runTest("Addition", [2, '+', 3, '='], "5");
+        runTest("Subtraction", [5, '-', 2, '='], "3");
+        runTest("Multiplication", [2, '*', 3, '='], "6");
+        runTest("Division", [6, '/', 2, '='], "3");
+        runTest("Chained Addition", [1, '+', 2, '+', 3, '='], "6");
+        runTest("Chained Mixed Ops", [10, '-', 2, '*', 3, '='], "24");
+        runTest("Decimal Addition", [0, '.', 1, '+', 0, '.', 2, '='], "0.3");
+        runTest("Clear Button", [1, '+', 2, 'C', 5, '='], "5");
+        runTest("Division by Zero", [6, '/', 0, '='], "Error");
+        runTest("Initial Zero", [0, 5, '='], "5");
+        runTest("Decimal start", ['.', 5, '+', 0, '.', 5, '='], "1");
+        runTest("Operator change", [5, '+', '-', 3, '='], "2");
+        runTest("Multiple decimals", [1, '.', 2, '.', 3, '='], "1.2");
+        runTest("Empty input then operator", ['+', 5, '='], "5");
+        runTest("Empty input then equals", ['='], "0");
+        runTest("Number after equals", [2, '+', 3, '=', 5], "5");
+        runTest("Operator after equals", [2, '+', 3, '=', '+', 5, '='], "10");
+        console.log("--- Calculator Tests Finished ---");
     </script>
 </body>
 </html>

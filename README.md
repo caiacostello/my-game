@@ -1,27 +1,23 @@
 # Simple Calculator
 
-A basic, single-page HTML calculator with essential arithmetic operations.
+This is a basic, self-contained calculator implemented in a single HTML file with embedded CSS and JavaScript.
 
 ## Features
-- Addition, Subtraction, Multiplication, Division
-- Decimal point support
-- Clear (C) button
-- Error handling for division by zero
-- Left-to-right evaluation for chained operations (e.g., `2 + 3 * 2` will calculate `(2+3) * 2 = 10`)
+
+*   Addition, Subtraction, Multiplication, Division
+*   Clear (C) button
+*   Decimal support
+*   Handles chained operations (e.g., `1 + 2 + 3 = 6`)
+*   Basic error handling for division by zero
+*   Minimal and clean design
 
 ## Usage
-1. Save the `index.html` file to your computer.
-2. Open `index.html` in any modern web browser.
-3. Use the buttons to perform calculations.
 
-## Test Cases
-This calculator includes embedded JavaScript test cases that run automatically when the page loads. Open your browser's developer console (usually F12) to view the test results. Each test will log whether it passed or failed, along with expected and actual values.
+1.  **Save the file**: Save the entire content of `index.html` into a file named `index.html` on your computer.
+2.  **Open in browser**: Open the `index.html` file using any modern web browser (e.g., Chrome, Firefox, Edge, Safari).
+3.  **Interact**: Click the number buttons to input numbers, operator buttons for operations, and the `=` button to get the result. Use `C` to clear the display and reset the calculator.
 
-## Code Structure
-- **HTML**: Defines the calculator layout (display and buttons).
-- **CSS**: Provides minimal styling for a clean and functional appearance.
-- **JavaScript**: Handles all calculator logic, including button clicks, display updates, and arithmetic operations using `eval()` for simplicity. Includes self-checking test cases.
+### Developer Information
 
-## Notes
-- The `eval()` function is used for performing calculations. While generally discouraged for security reasons in applications handling untrusted user input, it is acceptable for this simple, self-contained client-side calculator where input is strictly controlled by button presses.
-- The calculator follows a common simple calculator logic where operations are performed in the order they are entered, rather than mathematical operator precedence (e.g., `2 + 3 * 2` results in `10`, not `8`).
+*   **Test Cases**: Open your browser's developer console (usually by pressing `F12`) to see the results of integrated test cases. Any failed tests will be logged as errors.
+*   **Code Structure**: All HTML, CSS, and JavaScript are contained within the `index.html` file, making it easy to deploy and use without external dependencies.
