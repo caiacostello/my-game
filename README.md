@@ -1,23 +1,27 @@
 # Simple Calculator
 
-This is a basic, self-contained calculator implemented in a single HTML file with embedded CSS and JavaScript.
+A basic, self-contained calculator implemented in a single HTML file with embedded CSS and JavaScript.
 
 ## Features
 
-*   Addition, Subtraction, Multiplication, Division
-*   Clear (C) button
-*   Decimal support
-*   Handles chained operations (e.g., `1 + 2 + 3 = 6`)
-*   Basic error handling for division by zero
-*   Minimal and clean design
+-   Basic arithmetic operations: addition, subtraction, multiplication, division.
+-   Decimal support.
+-   Clear function.
+-   Error handling for division by zero.
 
 ## Usage
 
-1.  **Save the file**: Save the entire content of `index.html` into a file named `index.html` on your computer.
-2.  **Open in browser**: Open the `index.html` file using any modern web browser (e.g., Chrome, Firefox, Edge, Safari).
-3.  **Interact**: Click the number buttons to input numbers, operator buttons for operations, and the `=` button to get the result. Use `C` to clear the display and reset the calculator.
+1.  Save the `index.html` file to your computer.
+2.  Open the `index.html` file in any modern web browser (e.g., Chrome, Firefox, Edge, Safari).
+3.  Click the number buttons to input numbers.
+4.  Click the operator buttons (+, -, *, /) to select an operation.
+5.  Click the "C" button to clear the current input and reset the calculator.
+6.  Click the "=" button to calculate the result.
+7.  Check the browser's developer console (F12) for automated test results.
 
-### Developer Information
+## Development Notes
 
-*   **Test Cases**: Open your browser's developer console (usually by pressing `F12`) to see the results of integrated test cases. Any failed tests will be logged as errors.
-*   **Code Structure**: All HTML, CSS, and JavaScript are contained within the `index.html` file, making it easy to deploy and use without external dependencies.
+-   The entire application is contained within a single `index.html` file.
+-   CSS is embedded in the `<style>` tag.
+-   JavaScript is embedded in the `<script>` tag.
+-   Includes automated test cases that run on page load and log results to the browser console.
