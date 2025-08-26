@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        #calculator {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 300px;
+        }
+
+        #display {
+            width: calc(100% - 10px);
+            height: 50px;
+            background-color: #eee;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: right;
+            font-size: 2em;
+            padding: 5px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            width: 100%;
+            height: 60px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #666;
+            color: #fff;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #888;
+        }
+
+        .operator, .clear, .decimal {
+            background-color: #f7923b;
+        }
+
+        .operator:hover, .clear:hover, .decimal:hover {
+            background-color: #ffb16b;
+        }
+
+        .equals {
+            background-color: #28a745;
+        }
+
+        .equals:hover {
+            background-color: #38c755;
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+    <div id="calculator">
+        <input type="text" id="display" readonly value="0">
+        <div class="buttons">
+            <button class="clear">C</button>
+            <button class="operator">/</button>
+            <button class="operator">*</button>
+            <button class="operator">-</button>
+
+            <button class="number">7</button>
+            <button class="number">8</button>
+            <button class="number">9</button>
+            <button class="operator">+</button>
+
+            <button class="number">4</button>
+            <button class="number">5</button>
+            <button class="number">6</button>
+            <button class="decimal">.</button>
+
+            <button class="number">1</button>
+            <button class="number">2</button>
+            <button class="number">3</button>
+            <button class="equals">=</button>
+
+            <button class="number zero">0</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const display = document.getElementById('display');
+            const buttons = document.querySelector('.buttons');
+
+            let currentInput = '0';
+            let firstOperand = null;
+            let operator = null;
+            let waitForSecondOperand = false;
+
+            const updateDisplay = () => { display.value = currentInput; };
+
+            const resetCalculator = () => {
+                currentInput = '0';
+                firstOperand = null;
+                operator = null;
+                waitForSecondOperand = false;
+                updateDisplay();
+            };
+
+            const inputDigit = (digit) => {
+                if (waitForSecondOperand || currentInput === 'Error') {
+                    currentInput = digit;
+                    waitForSecondOperand = false;
+                } else {
+                    currentInput = currentInput === '0' ? digit : currentInput + digit;
+                }
+                updateDisplay();
+            };
+
+            const inputDecimal = () => {
+                if (waitForSecondOperand || currentInput === 'Error') {
+                    currentInput = '0.';
+                    waitForSecondOperand = false;
+                    updateDisplay();
+                    return;
+                }
+                if (!currentInput.includes('.')) {
+                    currentInput += '.';
+                }
+                updateDisplay();
+            };
+
+            const performCalculation = {
+                '/': (a, b) => a / b,
+                '*': (a, b) => a * b,
+                '+': (a, b) => a + b,
+                '-': (a, b) => a - b
+            };
+
+            const handleOperator = (nextOperator) => {
+                const inputValue = parseFloat(currentInput);
+
+                if (operator && waitForSecondOperand) {
+                    operator = nextOperator;
+                    return;
+                }
+
+                if (firstOperand === null) {
+                    firstOperand = inputValue;
+                } else if (operator) {
+                    const result = performCalculation[operator](firstOperand, inputValue);
+                    if (isNaN(result) || !isFinite(result)) {
+                        currentInput = "Error";
+                        firstOperand = null;
+                        operator = null;
+                        waitForSecondOperand = false;
+                        updateDisplay();
+                        console.error("TEST FAILED: Calculation error (e.g., division by zero).");
+                        return;
+                    }
+                    currentInput = String(result);
+                    firstOperand = result;
+                }
+
+                waitForSecondOperand = true;
+                operator = nextOperator;
+                updateDisplay();
+            };
+
+            buttons.addEventListener('click', (event) => {
+                const { target } = event;
+                if (!target.matches('button')) return;
+
+                if (target.classList.contains('number')) inputDigit(target.textContent);
+                else if (target.classList.contains('decimal')) inputDecimal();
+                else if (target.classList.contains('operator')) handleOperator(target.textContent);
+                else if (target.classList.contains('equals')) {
+                    if (firstOperand === null || operator === null) return;
+                    handleOperator(operator);
+                    operator = null;
+                    waitForSecondOperand = true;
+                }
+                else if (target.classList.contains('clear')) resetCalculator();
+            });
+
+            updateDisplay();
+
+            // --- TEST CASES ---
+            const runTest = (name, action, expected) => {
+                resetCalculator();
+                action();
+                const actual = display.value;
+                if (actual !== expected) {
+                    console.error(`TEST FAILED: ${name}. Expected: ${expected}, Got: ${actual}`);
+                }
+            };
+
+            runTest('Basic addition', () => { inputDigit('1'); inputDigit('2'); handleOperator('+'); inputDigit('3'); handleOperator('='); }, '15');
+            runTest('Subtraction', () => { inputDigit('1'); inputDigit('0'); handleOperator('-'); inputDigit('5'); handleOperator('='); }, '5');
+            runTest('Multiplication', () => { inputDigit('2'); handleOperator('*'); inputDigit('3'); handleOperator('='); }, '6');
+            runTest('Division', () => { inputDigit('1'); inputDigit('0'); handleOperator('/'); inputDigit('2'); handleOperator('='); }, '5');
+            runTest('Decimal input', () => { inputDigit('1'); inputDecimal(); inputDigit('5'); handleOperator('+'); inputDigit('2'); handleOperator('='); }, '3.5');
+            runTest('Chaining operations', () => { inputDigit('5'); handleOperator('+'); inputDigit('5'); handleOperator('*'); inputDigit('2'); handleOperator('='); }, '20');
+            runTest('Division by zero', () => { inputDigit('1'); handleOperator('/'); inputDigit('0'); handleOperator('='); }, 'Error');
+            runTest('Multiple decimal points', () => { inputDigit('1'); inputDecimal(); inputDigit('2'); inputDecimal(); inputDigit('3'); }, '1.23');
+            runTest('Operator change', () => { inputDigit('5'); handleOperator('+'); handleOperator('-'); inputDigit('2'); handleOperator('='); }, '3');
+            runTest('Input after error', () => { inputDigit('1'); handleOperator('/'); inputDigit('0'); handleOperator('='); inputDigit('5'); handleOperator('+'); inputDigit('5'); handleOperator('='); }, '10');
+        });
+    </script>
+</body>
+</html>
