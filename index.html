@@ -1,105 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Simple Calculator</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      font-family: Arial;
-    }
-    .calculator {
-      background: #eee;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    #display {
-      width: 200px;
-      height: 40px;
-      margin-bottom: 10px;
-      font-size: 20px;
-      text-align: right;
-      padding: 5px;
-    }
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 5px;
-    }
-    button {
-      padding: 15px;
-      font-size: 18px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #ddd;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="calculator">
-    <input type="text" id="display" readonly>
-    <div class="buttons">
-      <button onclick="append('7')">7</button>
-      <button onclick="append('8')">8</button>
-      <button onclick="append('9')">9</button>
-      <button onclick="append('/')">÷</button>
-      <button onclick="append('4')">4</button>
-      <button onclick="append('5')">5</button>
-      <button onclick="append('6')">6</button>
-      <button onclick="append('*')">×</button>
-      <button onclick="append('1')">1</button>
-      <button onclick="append('2')">2</button>
-      <button onclick="append('3')">3</button>
-      <button onclick="append('-')">-</button>
-      <button onclick="append('0')">0</button>
-      <button onclick="append('.')">.</button>
-      <button onclick="calculate()">=</button>
-      <button onclick="append('+')">+</button>
-      <button onclick="clearDisplay()" style="grid-column: span 4">Clear</button>
-    </div>
-  </div>
-
-  <script>
-    const display = document.getElementById('display');
-    
-    function append(value) {
-      display.value += value;
-    }
-
-    function clearDisplay() {
-      display.value = '';
-    }
-
-    function calculate() {
-      try {
-        // Test case: Check for division by zero
-        if (display.value.includes('/0')) {
-          console.error('Test failed: Division by zero detected');
-          display.value = 'Error';
-          return;
-        }
-        
-        const result = eval(display.value);
-        
-        // Test case: Check if result is valid
-        if (isNaN(result) || !isFinite(result)) {
-          console.error('Test failed: Invalid calculation result');
-          display.value = 'Error';
-          return;
-        }
-        
-        display.value = result;
-      } catch(e) {
-        console.error('Test failed:', e.message);
-        display.value = 'Error';
-      }
-    }
-  </script>
+    <main class="calculator-grid">
+        <div class="output">
+            <div data-previous-operand class="previous-operand"></div>
+            <div data-current-operand class="current-operand">0</div>
+        </div>
+        <button data-all-clear class="span-two">AC</button>
+        <button data-delete>DEL</button>
+        <button data-operator>÷</button>
+        <button data-number>1</button>
+        <button data-number>2</button>
+        <button data-number>3</button>
+        <button data-operator>*</button>
+        <button data-number>4</button>
+        <button data-number>5</button>
+        <button data-number>6</button>
+        <button data-operator>+</button>
+        <button data-number>7</button>
+        <button data-number>8</button>
+        <button data-number>9</button>
+        <button data-operator>-</button>
+        <button data-number>.</button>
+        <button data-number>0</button>
+        <button data-equals class="span-two">=</button>
+    </main>
+    <script src="script.js"></script>
 </body>
 </html>
